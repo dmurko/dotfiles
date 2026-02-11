@@ -94,7 +94,7 @@
           ".DS_Store"
           ".DS_Store?"
           "ehthumbs.db"
-          "Icon?"
+          "Icon\r"
           "Thumbs.db"
 
           # VS Code
