@@ -12,9 +12,11 @@
     # Shared Claude Code configuration for Niteo
     niteo-claude.url = "github:teamniteo/claude";
 
+    devenv.url = "github:cachix/devenv/v1.4.1";
+
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nix-darwin, home-manager, niteo-claude }:
+  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nix-darwin, home-manager, niteo-claude, devenv }:
   let
 
     homeconfig = { pkgs, lib, ... }:
@@ -34,7 +36,7 @@
 
       # Software I can't live without
       home.packages = with pkgs; [
-        pkgs-unstable.devenv
+        inputs.devenv.packages.aarch64-darwin.devenv
         cachix
         atuin
         bat
