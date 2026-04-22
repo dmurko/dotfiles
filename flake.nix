@@ -11,12 +11,17 @@
 
     # Shared Claude Code configuration for Niteo
     niteo-claude.url = "github:teamniteo/claude";
+    niteo-claude.inputs.mcp-nixos.follows = "mcp-nixos";
+    mcp-nixos.url = "github:utensils/mcp-nixos/v2.3.1";
+
+    # LLM agents (claude-code, codex, etc.) - daily updated builds
+    llm-agents.url = "github:numtide/llm-agents.nix";
 
     devenv.url = "github:cachix/devenv/v1.4.1";
 
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nix-darwin, home-manager, niteo-claude, devenv }:
+  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nix-darwin, home-manager, niteo-claude, mcp-nixos, llm-agents, devenv }:
   let
 
     homeconfig = { pkgs, lib, ... }:
@@ -176,7 +181,7 @@
 
     programs.claude-code = {
         enable = true;
-        package = pkgs-unstable.claude-code;
+        package = llm-agents.packages.aarch64-darwin.claude-code;
 
         # Get team MCPs from teamniteo/claude
         mcpServers = niteo-claude.lib.mcpServers pkgs // {};
@@ -292,6 +297,7 @@
             env = (old.env or { }) // {
               CGO_ENABLED = 1;
             };
+            doCheck = false;
           });
         })
       ];
@@ -343,7 +349,7 @@
             home-manager.users.dejanmurko = homeconfig;
             home-manager.backupFileExtension = ".backup";
             home-manager.extraSpecialArgs = {
-              inherit niteo-claude;
+              inherit niteo-claude llm-agents;
             };
         }
       ];
