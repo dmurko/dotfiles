@@ -189,8 +189,20 @@
 
         settings = {
 
+          # Register extra plugin marketplaces
+          extraKnownMarketplaces = {
+            hakuto = {
+              source = {
+                source = "github";
+                repo = "teamniteo/hakuto";
+              };
+            };
+          };
+
           # Get team Plugins from teamniteo/claude
-          enabledPlugins = niteo-claude.lib.enabledPlugins // {};
+          enabledPlugins = niteo-claude.lib.enabledPlugins // {
+            "hakuto@hakuto" = true;
+          };
 
           # Get team Permissions from teamniteo/claude
           permissions.allow = niteo-claude.lib.permissions.allow ++ [
