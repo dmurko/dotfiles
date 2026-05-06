@@ -17,7 +17,7 @@
     # LLM agents (claude-code, codex, etc.) - daily updated builds
     llm-agents.url = "github:numtide/llm-agents.nix";
 
-    devenv.url = "github:cachix/devenv/v1.11.2";
+    devenv.url = "github:cachix/devenv";
 
   };
 
