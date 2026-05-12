@@ -185,7 +185,35 @@
         package = llm-agents.packages.aarch64-darwin.claude-code;
 
         # Get team MCPs from teamniteo/claude
-        mcpServers = niteo-claude.lib.mcpServers pkgs // {};
+        mcpServers = niteo-claude.lib.mcpServers pkgs // {
+          # OAuth: authenticate via `/mcp` in Claude Code after rebuild.
+          # https://docs.ahrefs.com/mcp/docs/claude-code
+          ahrefs = {
+            type = "http";
+            url = "https://api.ahrefs.com/mcp/mcp";
+          };
+
+          dataforseo = {
+            command = "${pkgs.nodejs}/bin/npx";
+            args = [ "-y" "dataforseo-mcp-server" ];
+            env = {
+              DATAFORSEO_USERNAME = "\${DATAFORSEO_USERNAME}";
+              DATAFORSEO_PASSWORD = "\${DATAFORSEO_PASSWORD}";
+            };
+          };
+
+          # Google Search Console MCP (OAuth mode).
+          # https://suganthan.com/blog/google-search-console-mcp-server/
+          gsc = {
+            command = "${pkgs.nodejs}/bin/npx";
+            args = [ "-y" "suganthan-gsc-mcp" ];
+            env = {
+              GSC_AUTH_MODE = "oauth";
+              GSC_OAUTH_SECRETS_FILE = "\${GSC_OAUTH_SECRETS_FILE}";
+              GSC_SITE_URL = "\${GSC_SITE_URL}";
+            };
+          };
+        };
 
         settings = {
 
