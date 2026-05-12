@@ -213,6 +213,16 @@
               GSC_SITE_URL = "\${GSC_SITE_URL}";
             };
           };
+
+          # Plausible Analytics MCP (remote hosted by Sentry).
+          # https://github.com/getsentry/plausible-mcp
+          plausible = {
+            type = "http";
+            url = "https://plausible-mcp.sentry.dev/mcp";
+            headers = {
+              Authorization = "Bearer \${PLAUSIBLE_API_KEY}";
+            };
+          };
         };
 
         settings = {
