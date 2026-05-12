@@ -266,6 +266,18 @@
             open -a Terminal
           '';
         };
+
+        # Supply-chain protection: refuse npm/Bun packages younger than 7 days,
+        # so freshly-published malicious versions get caught before we install.
+        ".npmrc".text = ''
+          min-release-age=7
+          minimum-release-age=10080
+          save-exact=true
+        '';
+        ".bunfig.toml".text = ''
+          [install]
+          minimumReleaseAge = 604800
+        '';
       };
       
     };
