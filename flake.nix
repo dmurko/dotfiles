@@ -305,8 +305,10 @@
           '';
         };
 
-        # Supply-chain protection: refuse npm/Bun packages younger than 7 days,
-        # so freshly-published malicious versions get caught before we install.
+        # Supply-chain protection: refuse npm/Bun/PyPI packages younger than 7
+        # days, so freshly-published malicious versions get caught before we
+        # install. pip key requires pip 26.0+; uv duration syntax requires uv
+        # 0.9.17+.
         ".npmrc".text = ''
           min-release-age=7
           minimum-release-age=10080
@@ -315,6 +317,13 @@
         ".bunfig.toml".text = ''
           [install]
           minimumReleaseAge = 604800
+        '';
+        ".config/uv/uv.toml".text = ''
+          exclude-newer = "7 days"
+        '';
+        ".config/pip/pip.conf".text = ''
+          [install]
+          uploaded-prior-to = P7D
         '';
       };
       
