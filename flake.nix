@@ -146,6 +146,7 @@
           LC_ALL = "en_US.UTF-8";
           LANG = "en_US.UTF-8";
           EDITOR = "~/.editor";
+          BROWSER = "/Users/dejanmurko/Applications/Brave Browser.app/Contents/MacOS/Brave Browser";
 
           # Enable a few neat OMZ features
           HYPHEN_INSENSITIVE = "true";
