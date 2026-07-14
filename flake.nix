@@ -259,6 +259,30 @@
             "Bash(ls ~/Work/*)"
             "Bash(tail ~/Work/*)"
           ];
+
+          # Play sounds when Claude finishes or needs attention
+          hooks = {
+            Stop = [
+              {
+                hooks = [
+                  {
+                    type = "command";
+                    command = "afplay '/Users/dejanmurko/Documents/Claude Sounds/computer-chirp.wav'";
+                  }
+                ];
+              }
+            ];
+            Notification = [
+              {
+                hooks = [
+                  {
+                    type = "command";
+                    command = "afplay '/Users/dejanmurko/Documents/Claude Sounds/computer-beep.wav'";
+                  }
+                ];
+              }
+            ];
+          };
         };
 
         # Personal CLAUDE.md content
@@ -277,23 +301,6 @@
           **Workstation:** github.com/dmurko/dotfiles - usually invokes Claude from his nix-darwin-powered MacBook defined in these dotfiles.
         '';
       };
-
-      # Claude Code mutates ~/.claude/settings.json at runtime (theme, onboarding,
-      # permission approvals). home-manager places it as a read-only /nix/store
-      # symlink, which causes EACCES on write. After each rebuild, replace the
-      # symlink with a mutable copy. Note: runtime writes (between rebuilds) are
-      # overwritten on the next rebuild — home-manager backs the mutated file up
-      # to ~/.claude/settings.json.backup (via home-manager.backupFileExtension)
-      # if you need to recover.
-      home.activation.claudeSettingsWritable = lib.hm.dag.entryAfter ["writeBoundary"] ''
-        settings="$HOME/.claude/settings.json"
-        if [ -L "$settings" ]; then
-          target="$(readlink "$settings")"
-          rm "$settings"
-          cp "$target" "$settings"
-          chmod u+w "$settings"
-        fi
-      '';
 
       # Don't show the "Last login" message for every new terminal.
       home.file.".hushlogin" = {
