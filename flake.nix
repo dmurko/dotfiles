@@ -130,6 +130,12 @@
         matchBlocks."*" = {
           identityAgent = "/Users/dejanmurko/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh";
         };
+
+        matchBlocks."cruncher" = {
+          hostname = "cruncher.niteo.co";
+          user = "dmurko";
+          forwardAgent = true;
+        };
       };
 
 
