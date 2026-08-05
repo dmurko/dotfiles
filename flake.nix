@@ -127,14 +127,14 @@
         enable = true;
         enableDefaultConfig = false;
 
-        matchBlocks."*" = {
-          identityAgent = "/Users/dejanmurko/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh";
+        settings."*" = {
+          IdentityAgent = "/Users/dejanmurko/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh";
         };
 
-        matchBlocks."cruncher" = {
-          hostname = "cruncher.niteo.co";
-          user = "dmurko";
-          forwardAgent = true;
+        settings."cruncher" = {
+          HostName = "cruncher.niteo.co";
+          User = "dmurko";
+          ForwardAgent = true;
         };
       };
 
@@ -286,7 +286,7 @@
         };
 
         # Personal CLAUDE.md content
-        memory.text = ''
+        context = ''
           # About the User
 
           Dejan Murko (dmurko) - Co-Founder and Product Lead of Niteo, a bootstrapped SaaS studio founded in 2007, based in Europe. Co-Founder and Product Lead of Mayet, a bootstrapped company building software solutions for the biotech and pharma industry.
