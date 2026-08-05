@@ -47,6 +47,7 @@
         bat
         gh
         nodejs_24
+        pkgs-unstable.rtk
       ];
 
       programs.vim.enable = true;
@@ -282,6 +283,19 @@
                 ];
               }
             ];
+
+            # Compress Bash output through rtk before it reaches the context window
+            PreToolUse = [
+              {
+                matcher = "Bash";
+                hooks = [
+                  {
+                    type = "command";
+                    command = "${pkgs-unstable.rtk}/bin/rtk hook claude";
+                  }
+                ];
+              }
+            ];
           };
         };
 
@@ -299,6 +313,19 @@
 
           **GitHub:** github.com/dmurko - use the GitHub MCP to access private repos when needed.
           **Workstation:** github.com/dmurko/dotfiles - usually invokes Claude from his nix-darwin-powered MacBook defined in these dotfiles.
+
+
+          ## RTK
+
+          Bash calls are transparently rewritten through `rtk`, a proxy that
+          compresses command output to save context. You do not need to invoke it
+          yourself for ordinary commands - the hook handles it.
+
+          - `rtk proxy <cmd>` - run a command UNFILTERED. Use this when you suspect
+            the compression is hiding something you need (odd test output, a diff
+            that looks truncated, a parse that doesn't add up).
+          - `rtk gain` - token savings so far; `rtk discover` - missed opportunities.
+          - Only Bash goes through rtk. `Read`, `Grep` and `Glob` are untouched.
         '';
       };
 
