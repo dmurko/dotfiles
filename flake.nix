@@ -24,13 +24,43 @@
   outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nix-darwin, home-manager, niteo-claude, mcp-nixos, llm-agents, devenv }:
   let
 
-    homeconfig = { pkgs, lib, ... }:
-    let
-      pkgs-unstable = import nixpkgs-unstable {
-        system = "aarch64-darwin";
-        config.allowUnfree = true;
-      };
-    in {
+    pkgs-unstable = import nixpkgs-unstable {
+      system = "aarch64-darwin";
+      config.allowUnfree = true;
+    };
+
+    # Claude Code hooks: sounds on finish/attention, plus rtk output compression.
+    #
+    # These are deployed through the root-owned managed-settings.json (see
+    # `configuration` below) rather than programs.claude-code.settings. Claude
+    # Code writes ~/.claude/settings.json itself - plugin installs, /config
+    # toggles - and that write replaces the home-manager symlink with a fresh
+    # file, silently dropping every key it doesn't manage. It never writes to
+    # managed-settings.json, so hooks placed there survive.
+    claudeSounds = "/Users/dejanmurko/Documents/Claude Sounds";
+    claudeHooks = {
+      Stop = [{
+        hooks = [{
+          type = "command";
+          command = "afplay '${claudeSounds}/computer-chirp.wav'";
+        }];
+      }];
+      Notification = [{
+        hooks = [{
+          type = "command";
+          command = "afplay '${claudeSounds}/computer-beep.wav'";
+        }];
+      }];
+      PreToolUse = [{
+        matcher = "Bash";
+        hooks = [{
+          type = "command";
+          command = "${pkgs-unstable.rtk}/bin/rtk hook claude";
+        }];
+      }];
+    };
+
+    homeconfig = { pkgs, lib, ... }: {
       # Home Manager configuration
       # https://nix-community.github.io/home-manager/
       home.homeDirectory = lib.mkForce "/Users/dejanmurko";
@@ -248,6 +278,10 @@
           # Get team Plugins from teamniteo/claude
           enabledPlugins = niteo-claude.lib.enabledPlugins // {
             "hakuto@hakuto" = true;
+
+            # Auto-installed by Claude Code from the official marketplace.
+            # Declared here so its auto-install doesn't rewrite settings.json.
+            "skill-creator@claude-plugins-official" = true;
           };
 
           # Get team Permissions from teamniteo/claude
@@ -261,42 +295,14 @@
             "Bash(tail ~/Work/*)"
           ];
 
-          # Play sounds when Claude finishes or needs attention
-          hooks = {
-            Stop = [
-              {
-                hooks = [
-                  {
-                    type = "command";
-                    command = "afplay '/Users/dejanmurko/Documents/Claude Sounds/computer-chirp.wav'";
-                  }
-                ];
-              }
-            ];
-            Notification = [
-              {
-                hooks = [
-                  {
-                    type = "command";
-                    command = "afplay '/Users/dejanmurko/Documents/Claude Sounds/computer-beep.wav'";
-                  }
-                ];
-              }
-            ];
+          # NOTE: hooks deliberately live in managed-settings.json, not here.
+          # See `claudeHooks` at the top of this flake for why.
 
-            # Compress Bash output through rtk before it reaches the context window
-            PreToolUse = [
-              {
-                matcher = "Bash";
-                hooks = [
-                  {
-                    type = "command";
-                    command = "${pkgs-unstable.rtk}/bin/rtk hook claude";
-                  }
-                ];
-              }
-            ];
-          };
+          # Claude Code writes these back into ~/.claude/settings.json itself.
+          # Declaring them with the values it already wants means it has no
+          # reason to rewrite the file and clobber everything else in it.
+          theme = "dark";
+          tui = "fullscreen";
         };
 
         # Personal CLAUDE.md content
@@ -372,6 +378,18 @@
     configuration = { pkgs, ... }: {
       # Enable touch ID authentication for sudo.
       security.pam.services.sudo_local.touchIdAuth = true;
+
+      # Claude Code hooks, deployed as machine-wide managed settings.
+      # Root-owned and read-only to Claude Code, so unlike ~/.claude/settings.json
+      # it cannot be clobbered when Claude Code rewrites its own config.
+      system.activationScripts.postActivation.text = ''
+        echo "* Installing Claude Code managed settings" >&2
+        mkdir -p "/Library/Application Support/ClaudeCode"
+        install -m 0644 -o root -g wheel \
+          ${pkgs.writeText "claude-managed-settings.json"
+            (builtins.toJSON { hooks = claudeHooks; })} \
+          "/Library/Application Support/ClaudeCode/managed-settings.json"
+      '';
 
       # make sure firewall is up & running
       networking.applicationFirewall.enable = true;
