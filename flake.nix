@@ -284,7 +284,8 @@
             "skill-creator@claude-plugins-official" = true;
 
             # https://github.com/obra/superpowers
-            "superpowers@claude-plugins-official" = true;
+            # Explicitly disabled so its auto-install doesn't re-enable it.
+            "superpowers@claude-plugins-official" = false;
           };
 
           # Get team Permissions from teamniteo/claude
