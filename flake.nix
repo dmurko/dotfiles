@@ -282,10 +282,6 @@
             # Auto-installed by Claude Code from the official marketplace.
             # Declared here so its auto-install doesn't rewrite settings.json.
             "skill-creator@claude-plugins-official" = true;
-
-            # https://github.com/obra/superpowers
-            # Explicitly disabled so its auto-install doesn't re-enable it.
-            "superpowers@claude-plugins-official" = false;
           };
 
           # Get team Permissions from teamniteo/claude
