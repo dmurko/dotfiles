@@ -298,6 +298,9 @@
           # NOTE: hooks deliberately live in managed-settings.json, not here.
           # See `claudeHooks` at the top of this flake for why.
 
+          # Prevent auto-starting Remote Control
+          remoteControlAtStartup = false;
+
           # Claude Code writes these back into ~/.claude/settings.json itself.
           # Declaring them with the values it already wants means it has no
           # reason to rewrite the file and clobber everything else in it.
