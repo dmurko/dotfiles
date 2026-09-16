@@ -298,6 +298,9 @@
           # NOTE: hooks deliberately live in managed-settings.json, not here.
           # See `claudeHooks` at the top of this flake for why.
 
+          # Prevent `Co-Authored-By: Claude` commit footer
+          includeCoAuthoredBy = false;
+
           # Prevent auto-starting Remote Control
           remoteControlAtStartup = false;
 
