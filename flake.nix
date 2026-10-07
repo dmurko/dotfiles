@@ -69,6 +69,9 @@
       programs.htop.enable = true;
       programs.bat.enable = true;
 
+      # Tools that install themselves, like herdr's own installer
+      home.sessionPath = [ "$HOME/.local/bin" ];
+
       # Software I can't live without
       home.packages = with pkgs; [
         inputs.devenv.packages.aarch64-darwin.devenv
@@ -166,6 +169,11 @@
           HostName = "cruncher.niteo.co";
           User = "dmurko";
           ForwardAgent = true;
+        };
+
+        settings."ai-dmurko" = {
+          HostName = "ai-dmurko.containers";
+          ProxyJump = "cruncher";
         };
       };
 
