@@ -174,6 +174,7 @@
         settings."ai-dmurko" = {
           HostName = "ai-dmurko.containers";
           ProxyJump = "cruncher";
+          User = "dmurko";
         };
       };
 
