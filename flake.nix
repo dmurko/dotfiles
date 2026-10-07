@@ -166,7 +166,7 @@
         };
 
         settings."cruncher" = {
-          HostName = "cruncher.niteo.co";
+          HostName = "cruncher";
           User = "dmurko";
           ForwardAgent = true;
         };
