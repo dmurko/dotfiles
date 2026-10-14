@@ -10,8 +10,8 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # Shared Claude Code configuration for Niteo
-    niteo-claude.url = "github:teamniteo/claude";
-    niteo-claude.inputs.mcp-nixos.follows = "mcp-nixos";
+    niteo-agents.url = "github:teamniteo/agents";
+    niteo-agents.inputs.mcp-nixos.follows = "mcp-nixos";
     mcp-nixos.url = "github:utensils/mcp-nixos/v2.3.1";
 
     # LLM agents (claude-code, codex, etc.) - daily updated builds
@@ -21,7 +21,7 @@
 
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nix-darwin, home-manager, niteo-claude, mcp-nixos, llm-agents, devenv }:
+  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nix-darwin, home-manager, niteo-agents, mcp-nixos, llm-agents, devenv }:
   let
 
     pkgs-unstable = import nixpkgs-unstable {
@@ -231,8 +231,8 @@
         enable = true;
         package = llm-agents.packages.aarch64-darwin.claude-code;
 
-        # Get team MCPs from teamniteo/claude
-        mcpServers = niteo-claude.lib.mcpServers pkgs // {
+        # Get team MCPs from teamniteo/agents
+        mcpServers = niteo-agents.lib.mcpServers pkgs // {
           # OAuth: authenticate via `/mcp` in Claude Code after rebuild.
           # https://docs.ahrefs.com/mcp/docs/claude-code
           ahrefs = {
@@ -284,8 +284,8 @@
             };
           };
 
-          # Get team Plugins from teamniteo/claude
-          enabledPlugins = niteo-claude.lib.enabledPlugins // {
+          # Get team Plugins from teamniteo/agents
+          enabledPlugins = niteo-agents.lib.enabledPlugins // {
             "hakuto@hakuto" = true;
 
             # Auto-installed by Claude Code from the official marketplace.
@@ -293,8 +293,8 @@
             "skill-creator@claude-plugins-official" = true;
           };
 
-          # Get team Permissions from teamniteo/claude
-          permissions.allow = niteo-claude.lib.permissions.allow ++ [
+          # Get team Permissions from teamniteo/agents
+          permissions.allow = niteo-agents.lib.permissions.allow ++ [
 
             # Auto-allow read-only commands in common directories
             "Read(~/Work/*)"
@@ -512,7 +512,7 @@
             home-manager.users.dejanmurko = homeconfig;
             home-manager.backupFileExtension = ".backup";
             home-manager.extraSpecialArgs = {
-              inherit niteo-claude llm-agents;
+              inherit niteo-agents llm-agents;
             };
         }
       ];
