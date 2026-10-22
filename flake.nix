@@ -270,6 +270,12 @@
               Authorization = "Bearer \${PLAUSIBLE_API_KEY}";
             };
           };
+
+          # Monid MCP (remote, OAuth via /mcp).
+          monid = {
+            type = "http";
+            url = "https://mcp.monid.ai/v1";
+          };
         };
 
         settings = {
