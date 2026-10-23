@@ -359,15 +359,16 @@
           **Workstation:** github.com/dmurko/dotfiles - usually invokes Claude from his nix-darwin-powered MacBook defined in these dotfiles.
 
 
+          ## Markdown
+
+          Don't hard-wrap text in Markdown files. Write each paragraph and each list item as one line, however long; let the editor soft-wrap. Line breaks only where Markdown needs them (headings, list items, table rows, code blocks, blank lines between paragraphs). When editing a file that is already hard-wrapped, unwrap the parts you touch.
+
+
           ## RTK
 
-          Bash calls are transparently rewritten through `rtk`, a proxy that
-          compresses command output to save context. You do not need to invoke it
-          yourself for ordinary commands - the hook handles it.
+          Bash calls are transparently rewritten through `rtk`, a proxy that compresses command output to save context. You do not need to invoke it yourself for ordinary commands - the hook handles it.
 
-          - `rtk proxy <cmd>` - run a command UNFILTERED. Use this when you suspect
-            the compression is hiding something you need (odd test output, a diff
-            that looks truncated, a parse that doesn't add up).
+          - `rtk proxy <cmd>` - run a command UNFILTERED. Use this when you suspect the compression is hiding something you need (odd test output, a diff that looks truncated, a parse that doesn't add up).
           - `rtk gain` - token savings so far; `rtk discover` - missed opportunities.
           - Only Bash goes through rtk. `Read`, `Grep` and `Glob` are untouched.
         '';
