@@ -37,6 +37,23 @@
     # toggles - and that write replaces the home-manager symlink with a fresh
     # file, silently dropping every key it doesn't manage. It never writes to
     # managed-settings.json, so hooks placed there survive.
+    # CLAUDE_CODE_CERT_STORE: llm-agents' wrapper sets it to `system`, which on
+    # darwin holds only the CA certificates in the login and System keychains,
+    # not Apple's built-in roots. With any certificate there (e.g. Xcode's signing
+    # intermediates) every TLS connection fails with UNABLE_TO_GET_ISSUER_CERT_LOCALLY.
+    # Restore Claude Code's default stores. Our wrapper runs first, so the inner
+    # `--set-default` leaves it alone.
+    # TODO: remove when https://github.com/numtide/llm-agents.nix/pull/11169 is merged
+    claudeCode = pkgs-unstable.symlinkJoin {
+      name = "claude-code-wrapped";
+      paths = [ llm-agents.packages.aarch64-darwin.claude-code ];
+      nativeBuildInputs = [ pkgs-unstable.makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/claude \
+          --set-default CLAUDE_CODE_CERT_STORE bundled,system
+      '';
+    };
+
     claudeSounds = "/Users/dejanmurko/Documents/Claude Sounds";
     claudeHooks = {
       Stop = [{
@@ -229,7 +246,7 @@
 
     programs.claude-code = {
         enable = true;
-        package = llm-agents.packages.aarch64-darwin.claude-code;
+        package = claudeCode;
 
         # Get team MCPs from teamniteo/agents
         mcpServers = niteo-agents.lib.mcpServers pkgs // {
@@ -399,6 +416,15 @@
     configuration = { pkgs, ... }: {
       # Enable touch ID authentication for sudo.
       security.pam.services.sudo_local.touchIdAuth = true;
+
+      # Distrust roots of the compromised eMudhra intermediates (Oct 2026), as CLI
+      # tools reading /etc/ssl/certs/ca-certificates.crt never check revocation.
+      # Names as they appear in that file.
+      # https://paretosecurity.com/mac/checks/compromised-ca
+      security.pki.caCertificateBlacklist = [
+        "Comodo AAA Services root" # AAA Certificate Services
+        "emSign ECC Root CA - G3"
+      ];
 
       # Claude Code hooks, deployed as machine-wide managed settings.
       # Root-owned and read-only to Claude Code, so unlike ~/.claude/settings.json
