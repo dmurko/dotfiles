@@ -293,6 +293,17 @@
             type = "http";
             url = "https://mcp.monid.ai/v1";
           };
+
+          # Postale.io mailbox (IMAP/SMTP): our own stdlib-only server.
+          # send_email always asks first, see managed settings below.
+          postale = {
+            command = "${pkgs.python3}/bin/python3";
+            args = [ "${./pkgs/postale-mcp/server.py}" ];
+            env = {
+              POSTALE_USER = "\${POSTALE_USER}";
+              POSTALE_PASSWORD = "\${POSTALE_PASSWORD}";
+            };
+          };
         };
 
         settings = {
@@ -427,7 +438,7 @@
         "emSign ECC Root CA - G3"
       ];
 
-      # Claude Code hooks, deployed as machine-wide managed settings.
+      # Claude Code hooks and the email approval rule, deployed as machine-wide managed settings.
       # Root-owned and read-only to Claude Code, so unlike ~/.claude/settings.json
       # it cannot be clobbered when Claude Code rewrites its own config.
       system.activationScripts.postActivation.text = ''
@@ -435,7 +446,12 @@
         mkdir -p "/Library/Application Support/ClaudeCode"
         install -m 0644 -o root -g wheel \
           ${pkgs.writeText "claude-managed-settings.json"
-            (builtins.toJSON { hooks = claudeHooks; })} \
+            (builtins.toJSON {
+              hooks = claudeHooks;
+              # Every email needs approval, whatever a project's settings allow.
+              # home-manager ships mcpServers as a plugin, hence the prefix.
+              permissions.ask = [ "mcp__plugin_claude-code-home-manager_postale__send_email" ];
+            })} \
           "/Library/Application Support/ClaudeCode/managed-settings.json"
       '';
 
