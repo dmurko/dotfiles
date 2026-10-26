@@ -5,7 +5,8 @@ Tools: list_messages, read_message, send_email. Reading never marks mail as
 read. Sent mail is also filed in the Sent folder, since SMTP doesn't do that.
 
 Config from env: POSTALE_USER (full address), POSTALE_PASSWORD, and optionally
-POSTALE_HOST (default mail.postale.io). Settings: https://postale.io/client/
+POSTALE_NAME (display name in From) and POSTALE_HOST (default mail.postale.io).
+Settings: https://postale.io/client/
 """
 
 import base64
@@ -398,7 +399,9 @@ def send_email(args):
                 if not REPLY_PREFIX.match(subject):
                     subject = "Re: " + subject
 
-        msg["From"] = user
+        # Postale's display name only applies to its webmail; SMTP clients set their own.
+        name = os.environ.get("POSTALE_NAME", "")
+        msg["From"] = email.utils.formataddr((name, user)) if name and not name.startswith("${") else user
         msg["To"] = ", ".join(to)
         if cc:
             msg["Cc"] = ", ".join(cc)

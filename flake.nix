@@ -302,6 +302,7 @@
             env = {
               POSTALE_USER = "\${POSTALE_USER}";
               POSTALE_PASSWORD = "\${POSTALE_PASSWORD}";
+              POSTALE_NAME = "Dean C.";
             };
           };
         };
