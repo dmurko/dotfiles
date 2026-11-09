@@ -401,10 +401,11 @@
           '';
         };
 
-        # Supply-chain protection: refuse npm/Bun/PyPI packages younger than 7
-        # days, so freshly-published malicious versions get caught before we
-        # install. pip key requires pip 26.0+; uv duration syntax requires uv
-        # 0.9.17+.
+        # Supply-chain protection: refuse npm/Bun/PyPI/RubyGems packages
+        # younger than 7 days, so freshly-published malicious versions get
+        # caught before we install. pip key requires pip 26.1+; uv duration
+        # syntax requires uv 0.9.17+; Bundler cooldown requires Bundler 4.0.13+.
+        # Checked by Pareto Security's "Package Manager Release Age" check.
         ".npmrc".text = ''
           min-release-age=7
           minimum-release-age=10080
@@ -418,8 +419,12 @@
           exclude-newer = "7 days"
         '';
         ".config/pip/pip.conf".text = ''
-          [install]
+          [global]
           uploaded-prior-to = P7D
+        '';
+        ".bundle/config".text = ''
+          ---
+          BUNDLE_COOLDOWN: "7"
         '';
       };
       
@@ -430,11 +435,12 @@
 
       # Distrust roots of the compromised eMudhra intermediates (Oct 2026), as CLI
       # tools reading /etc/ssl/certs/ca-certificates.crt never check revocation.
-      # Names as they appear in that file.
+      # Names as they appear in that file; a name missing from it fails the
+      # build, so drop entries once NSS removes the root itself (emSign ECC
+      # Root CA - G3 went in NSS 3.131.1).
       # https://paretosecurity.com/mac/checks/compromised-ca
       security.pki.caCertificateBlacklist = [
         "Comodo AAA Services root" # AAA Certificate Services
-        "emSign ECC Root CA - G3"
       ];
 
       # Claude Code hooks and the email approval rule, deployed as machine-wide managed settings.
