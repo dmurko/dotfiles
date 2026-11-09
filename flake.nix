@@ -319,8 +319,7 @@
             };
           };
 
-          # Get team Plugins from teamniteo/agents
-          enabledPlugins = niteo-agents.lib.enabledPlugins // {
+          enabledPlugins = {
             "hakuto@hakuto" = true;
 
             # Auto-installed by Claude Code from the official marketplace.
@@ -328,8 +327,7 @@
             "skill-creator@claude-plugins-official" = true;
           };
 
-          # Get team Permissions from teamniteo/agents
-          permissions.allow = niteo-agents.lib.permissions.allow ++ [
+          permissions.allow = [
 
             # Auto-allow read-only commands in common directories
             "Read(~/Work/*)"
