@@ -374,6 +374,11 @@
           Don't hard-wrap text in Markdown files. Write each paragraph and each list item as one line, however long; let the editor soft-wrap. Line breaks only where Markdown needs them (headings, list items, table rows, code blocks, blank lines between paragraphs). When editing a file that is already hard-wrapped, unwrap the parts you touch.
 
 
+          ## Writing
+
+          No editorial or patronizing commentary in anything you write: issues, PR descriptions and comments, docs, SOPs, commit messages. State the facts and the ask. Don't add sentences that judge, dramatize, or explain why the reader should care, e.g. "this is an audit finding waiting to happen".
+
+
           ## RTK
 
           Bash calls are transparently rewritten through `rtk`, a proxy that compresses command output to save context. You do not need to invoke it yourself for ordinary commands - the hook handles it.
