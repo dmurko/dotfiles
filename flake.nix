@@ -29,7 +29,8 @@
       config.allowUnfree = true;
     };
 
-    # Claude Code hooks: sounds on finish/attention, plus rtk output compression.
+    # Claude Code hooks: sounds on finish/attention, rtk output compression, and
+    # process cleanup on session end.
     #
     # These are deployed through the root-owned managed-settings.json (see
     # `configuration` below) rather than programs.claude-code.settings. Claude
@@ -55,7 +56,49 @@
     };
 
     claudeSounds = "/Users/dejanmurko/Documents/Claude Sounds";
+
+    # SessionEnd: kill everything the session started that is still running
+    # (dev servers, databases, headless Chrome), including orphans reparented
+    # to launchd. Claude Code exports CLAUDE_CODE_SESSION_ID to every process it
+    # spawns and orphans keep it, so match on that. macOS hides the environment
+    # of Apple platform binaries (/usr/bin/*), so those are not matched.
+    # Run with DRY_RUN=1 to list matches instead of killing them.
+    claudeSessionCleanup = pkgs-unstable.writeShellScript "claude-session-cleanup" ''
+      sid=$(${pkgs-unstable.jq}/bin/jq -r '.session_id // empty')
+      [ -n "$sid" ] || exit 0
+
+      # Skip this script and its ancestors (they inherit the tag too).
+      skip=" $$ "
+      p=$$
+      while [ "$p" -gt 1 ]; do
+        p=$(/bin/ps -o ppid= -p "$p" | tr -d ' ')
+        [ -n "$p" ] || break
+        skip="$skip$p "
+      done
+
+      pids=$(/bin/ps -wwEax -o pid=,ppid=,command= \
+        | /usr/bin/awk -v tag="CLAUDE_CODE_SESSION_ID=$sid" -v self="$$" -v skip="$skip" '
+            index($0, tag) && $2 != self && index(skip, " " $1 " ") == 0 { print $1 }')
+      [ -n "$pids" ] || exit 0
+
+      if [ -n "$DRY_RUN" ]; then
+        for pid in $pids; do /bin/ps -o pid=,etime=,comm= -p "$pid"; done
+        exit 0
+      fi
+
+      kill -TERM $pids 2>/dev/null
+      # Escalate after a grace period, detached so the hook returns immediately.
+      /usr/bin/nohup /bin/sh -c "sleep 3; kill -KILL $pids 2>/dev/null" >/dev/null 2>&1 &
+      exit 0
+    '';
+
     claudeHooks = {
+      SessionEnd = [{
+        hooks = [{
+          type = "command";
+          command = "${claudeSessionCleanup}";
+        }];
+      }];
       Stop = [{
         hooks = [{
           type = "command";
