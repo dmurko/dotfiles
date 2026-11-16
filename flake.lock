@@ -480,6 +480,26 @@
         "type": "github"
       }
     },
+    "passlet": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794829687,
+        "narHash": "sha256-O6qMtgeBeQgXa4LTu0AAWE/vSCbDSk12aPufSxZqKJc=",
+        "owner": "ParetoSecurity",
+        "repo": "passlet",
+        "rev": "5b796b38b1be5c9c77053a4e1ec94fa6fe4d2f4f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ParetoSecurity",
+        "repo": "passlet",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "devenv": "devenv",
@@ -489,7 +509,8 @@
         "niteo-agents": "niteo-agents",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_4",
-        "nixpkgs-unstable": "nixpkgs-unstable"
+        "nixpkgs-unstable": "nixpkgs-unstable",
+        "passlet": "passlet"
       }
     },
     "rust-overlay": {

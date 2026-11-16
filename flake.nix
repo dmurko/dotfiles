@@ -19,9 +19,14 @@
 
     devenv.url = "github:cachix/devenv";
 
+    # Temporary, scoped GitHub credentials for coding agents, approved on this Mac
+    # https://passlet.dev/get-started/
+    passlet.url = "github:ParetoSecurity/passlet";
+    passlet.inputs.nixpkgs.follows = "nixpkgs";
+
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nix-darwin, home-manager, niteo-agents, mcp-nixos, llm-agents, devenv }:
+  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nix-darwin, home-manager, niteo-agents, mcp-nixos, llm-agents, devenv, passlet }:
   let
 
     pkgs-unstable = import nixpkgs-unstable {
@@ -80,6 +85,11 @@
     homeconfig = { pkgs, lib, ... }: {
       # Home Manager configuration
       # https://nix-community.github.io/home-manager/
+      imports = [ passlet.homeManagerModules.default ];
+
+      programs.passlet.enable = true;
+      programs.passlet.plugins.claude-code.enable = true;
+
       home.homeDirectory = lib.mkForce "/Users/dejanmurko";
       home.stateVersion = "25.11";
       programs.home-manager.enable = true;
