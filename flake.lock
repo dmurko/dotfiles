@@ -265,11 +265,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794644686,
-        "narHash": "sha256-B7fVPPYbkrtDj4MigLxD8/7PqF3d6TUgjxzLrzSXrh8=",
+        "lastModified": 1794940389,
+        "narHash": "sha256-UfDNn0k6GMElLUuK0A71iMSKF58aVkwlFsbEGfXMKsk=",
         "owner": "teamniteo",
         "repo": "agents",
-        "rev": "19f2bbdcd8c00b9f7f9709d0aff9b7a7594d68e8",
+        "rev": "0abea22c8b6f438bb2a0c027e1ccaedc99bf406c",
         "type": "github"
       },
       "original": {
