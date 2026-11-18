@@ -24,9 +24,12 @@
     passlet.url = "github:ParetoSecurity/passlet";
     passlet.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Niteo's Claude Code plugin marketplace; update with `nix flake update hakuto`
+    hakuto = { url = "github:teamniteo/hakuto"; flake = false; };
+
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nix-darwin, home-manager, niteo-agents, mcp-nixos, llm-agents, devenv, passlet }:
+  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nix-darwin, home-manager, niteo-agents, mcp-nixos, llm-agents, devenv, passlet, hakuto }:
   let
 
     pkgs-unstable = import nixpkgs-unstable {
@@ -141,6 +144,7 @@
 
       programs.passlet.enable = true;
       programs.passlet.plugins.claude-code.enable = true;
+      programs.claude-code.marketplaces.hakuto = hakuto;
       # Passlet registers its marketplace via programs.claude-code.marketplaces,
       # which links this file; Claude Code rewrites it on marketplace refresh.
       # Overwrite it on switch instead of backing it up (backup collides).
@@ -405,16 +409,6 @@
         };
 
         settings = {
-
-          # Register extra plugin marketplaces
-          extraKnownMarketplaces = {
-            hakuto = {
-              source = {
-                source = "github";
-                repo = "teamniteo/hakuto";
-              };
-            };
-          };
 
           enabledPlugins = {
             "hakuto@hakuto" = true;

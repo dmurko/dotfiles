@@ -195,6 +195,22 @@
         "type": "github"
       }
     },
+    "hakuto": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1795017088,
+        "narHash": "sha256-86ILgm2mRNC9rRdPJ+SfNnLpfrcRZTG8DyxKGpdPENM=",
+        "owner": "teamniteo",
+        "repo": "hakuto",
+        "rev": "a5f9ed6f0df2542ebdf71e1fdcb6e96803ebd854",
+        "type": "github"
+      },
+      "original": {
+        "owner": "teamniteo",
+        "repo": "hakuto",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -503,6 +519,7 @@
     "root": {
       "inputs": {
         "devenv": "devenv",
+        "hakuto": "hakuto",
         "home-manager": "home-manager",
         "llm-agents": "llm-agents",
         "mcp-nixos": "mcp-nixos",
