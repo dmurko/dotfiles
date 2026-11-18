@@ -96,6 +96,11 @@
       "confirm_and_apply" "approve_change"
     ];
 
+    # Customer.io MCP writes and deletes: each one asks first.
+    customerIoWriteTools = map (t: "mcp__plugin_claude-code-home-manager_customerio__" + t) [
+      "cio_write_api" "cio_delete_api"
+    ];
+
     # FirstPromoter MCP is read-only for us: every write tool is denied.
     # Names from docs.firstpromoter.com/mcp/tools, read 2026-11-18 (experimental
     # server; recheck the list when FirstPromoter adds tools).
@@ -553,7 +558,7 @@
               # whatever a project's settings allow.
               # home-manager ships mcpServers as a plugin, hence the prefix.
               permissions.ask = [ "mcp__plugin_claude-code-home-manager_postale__send_email" ]
-                ++ metaAdsWriteTools ++ googleAdsWriteTools;
+                ++ metaAdsWriteTools ++ googleAdsWriteTools ++ customerIoWriteTools;
               # FirstPromoter is read-only.
               permissions.deny = firstPromoterWriteTools;
             })} \
