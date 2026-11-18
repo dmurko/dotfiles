@@ -86,6 +86,13 @@
       "ads_delete_local_ad_image" "ads_dataset_create" "ads_dataset_update_automatic_matching"
     ];
 
+    # Google Ads MCP (AdLoop) tools that change an account: each one asks first.
+    # Every other AdLoop write tool only stores a plan locally; these two apply it.
+    # Checked in the adloop 0.41.2 wheel, 2026-11-18. Recheck on every version bump.
+    googleAdsWriteTools = map (t: "mcp__plugin_claude-code-home-manager_google-ads__" + t) [
+      "confirm_and_apply" "approve_change"
+    ];
+
     claudeSounds = "/Users/dejanmurko/Documents/Claude Sounds";
     claudeHooks = {
       Stop = [{
@@ -350,6 +357,21 @@
             type = "http";
             url = "https://mcp.facebook.com/ads";
           };
+
+          # Google Ads MCP (AdLoop, runs locally; MIT). OAuth client from our own
+          # Google Cloud project. Config, client and token live in the Marketing
+          # Work folder's git-ignored .adloop/ (config.yaml points to the other two).
+          # Pinned to a release older than the 7-day uv cooldown below. Changes
+          # apply only through the tools in googleAdsWriteTools, which ask first.
+          # https://github.com/kLOsk/adloop
+          google-ads = {
+            command = "${pkgs.uv}/bin/uvx";
+            args = [ "adloop@0.41.2" ];
+            env = {
+              ADLOOP_TOOLSETS = "ads";
+              ADLOOP_CONFIG = "/Users/dejanmurko/Work/Ops/Marketing Work/.adloop/config.yaml";
+            };
+          };
         };
 
         settings = {
@@ -503,11 +525,11 @@
           ${pkgs.writeText "claude-managed-settings.json"
             (builtins.toJSON {
               hooks = claudeHooks;
-              # Every email and every Meta Ads change needs approval, whatever a
-              # project's settings allow.
+              # Every email and every Meta Ads or Google Ads change needs approval,
+              # whatever a project's settings allow.
               # home-manager ships mcpServers as a plugin, hence the prefix.
               permissions.ask = [ "mcp__plugin_claude-code-home-manager_postale__send_email" ]
-                ++ metaAdsWriteTools;
+                ++ metaAdsWriteTools ++ googleAdsWriteTools;
             })} \
           "/Library/Application Support/ClaudeCode/managed-settings.json"
       '';
