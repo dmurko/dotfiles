@@ -59,6 +59,26 @@
       '';
     };
 
+    # Meta Ads MCP write tools: each one asks first (managed settings below).
+    # Names from Meta's ads-mcp-server tool docs, read 2026-11-18.
+    metaAdsWriteTools = map (t: "mcp__plugin_claude-code-home-manager_meta-ads__" + t) [
+      "ads_create_campaign" "ads_create_ad_set" "ads_create_ad" "ads_create_creative"
+      "ads_activate_entity" "ads_update_entity" "ads_boost_ig_post"
+      "ads_create_custom_audience" "ads_update_custom_audience"
+      "ads_update_custom_audience_users" "ads_delete_custom_audience"
+      "ads_experiment_abtest_create_test" "ads_experiment_abtest_update_test"
+      "ads_experiment_lift_create_test"
+      "ads_pixel_event_create" "ads_pixel_event_update" "ads_pixel_event_delete"
+      "ads_pixel_parameter_create" "ads_pixel_parameter_update" "ads_pixel_parameter_delete"
+      "ads_catalog_create" "ads_catalog_update_catalog"
+      "ads_catalog_product_create" "ads_catalog_update_product" "ads_catalog_delete_product"
+      "ads_catalog_create_product_set" "ads_catalog_update_product_set" "ads_catalog_product_set_delete"
+      "ads_catalog_create_product_feed" "ads_catalog_update_product_feed"
+      "ads_catalog_create_product_feed_upload_session" "ads_catalog_product_feed_delete"
+      "ads_catalog_create_feed_rule" "ads_catalog_product_feed_delete_rule"
+      "ads_catalog_event_source_connect" "ads_catalog_event_source_disconnect"
+    ];
+
     claudeSounds = "/Users/dejanmurko/Documents/Claude Sounds";
     claudeHooks = {
       Stop = [{
@@ -315,6 +335,14 @@
               POSTALE_NAME = "Dean C.";
             };
           };
+
+          # Meta Ads MCP (Meta-hosted; OAuth via /mcp, Facebook Login for Business).
+          # Every write tool asks first, see metaAdsWriteTools and managed settings.
+          # https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-get-started
+          meta-ads = {
+            type = "http";
+            url = "https://mcp.facebook.com/ads";
+          };
         };
 
         settings = {
@@ -468,9 +496,11 @@
           ${pkgs.writeText "claude-managed-settings.json"
             (builtins.toJSON {
               hooks = claudeHooks;
-              # Every email needs approval, whatever a project's settings allow.
+              # Every email and every Meta Ads change needs approval, whatever a
+              # project's settings allow.
               # home-manager ships mcpServers as a plugin, hence the prefix.
-              permissions.ask = [ "mcp__plugin_claude-code-home-manager_postale__send_email" ];
+              permissions.ask = [ "mcp__plugin_claude-code-home-manager_postale__send_email" ]
+                ++ metaAdsWriteTools;
             })} \
           "/Library/Application Support/ClaudeCode/managed-settings.json"
       '';
