@@ -134,7 +134,7 @@
       }];
     };
 
-    homeconfig = { pkgs, lib, ... }: {
+    homeconfig = { config, pkgs, lib, ... }: {
       # Home Manager configuration
       # https://nix-community.github.io/home-manager/
       imports = [ passlet.homeManagerModules.default ];
@@ -144,7 +144,7 @@
       # Passlet registers its marketplace via programs.claude-code.marketplaces,
       # which links this file; Claude Code rewrites it on marketplace refresh.
       # Overwrite it on switch instead of backing it up (backup collides).
-      home.file.".claude/plugins/known_marketplaces.json".force = true;
+      home.file."${config.programs.claude-code.configDir}/plugins/known_marketplaces.json".force = true;
 
       home.homeDirectory = lib.mkForce "/Users/dejanmurko";
       home.stateVersion = "25.11";
