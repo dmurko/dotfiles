@@ -106,6 +106,9 @@
       "create_promo_code" "update_promo_code" "archive_promo_code"
       "create_product" "update_product" "delete_product"
       "create_email" "update_email"
+      # Seen on the live server 2026-11-18, not in the docs: a write tool, and
+      # the loader that exposes the docs' write tools on demand.
+      "create_contest" "get_more_tools"
     ];
 
     claudeSounds = "/Users/dejanmurko/Documents/Claude Sounds";
@@ -138,6 +141,10 @@
 
       programs.passlet.enable = true;
       programs.passlet.plugins.claude-code.enable = true;
+      # Passlet registers its marketplace via programs.claude-code.marketplaces,
+      # which links this file; Claude Code rewrites it on marketplace refresh.
+      # Overwrite it on switch instead of backing it up (backup collides).
+      home.file.".claude/plugins/known_marketplaces.json".force = true;
 
       home.homeDirectory = lib.mkForce "/Users/dejanmurko";
       home.stateVersion = "25.11";
