@@ -77,6 +77,13 @@
       "ads_catalog_create_product_feed_upload_session" "ads_catalog_product_feed_delete"
       "ads_catalog_create_feed_rule" "ads_catalog_product_feed_delete_rule"
       "ads_catalog_event_source_connect" "ads_catalog_event_source_disconnect"
+      "ads_catalog_update_feed_rule"
+      # Found on the live server 2026-11-18, not in Meta's docs.
+      "ads_duplicate_entity" "ads_creative_update" "ads_creative_delete"
+      "ads_creative_create_image_variations" "ads_creative_update_image_elements"
+      "ads_creative_upload_local_image" "ads_creative_upload_media"
+      "ads_create_upload_url" "ads_finalize_upload" "ads_finalize_local_ad_image_upload"
+      "ads_delete_local_ad_image" "ads_dataset_create" "ads_dataset_update_automatic_matching"
     ];
 
     claudeSounds = "/Users/dejanmurko/Documents/Claude Sounds";
