@@ -93,6 +93,21 @@
       "confirm_and_apply" "approve_change"
     ];
 
+    # FirstPromoter MCP is read-only for us: every write tool is denied.
+    # Names from docs.firstpromoter.com/mcp/tools, read 2026-11-18 (experimental
+    # server; recheck the list when FirstPromoter adds tools).
+    firstPromoterWriteTools = map (t: "mcp__plugin_claude-code-home-manager_firstpromoter__" + t) [
+      "create_campaign" "update_campaign"
+      "create_promoter" "update_promoter" "accept_promoter" "reject_promoter"
+      "block_promoter" "add_promoter_to_campaign" "move_promoter_to_campaign"
+      "assign_parent_promoter" "restore_promoter" "update_promoter_campaign"
+      "mark_commission_fulfilled" "mark_commission_unfulfilled"
+      "create_reward" "update_reward" "hide_reward"
+      "create_promo_code" "update_promo_code" "archive_promo_code"
+      "create_product" "update_product" "delete_product"
+      "create_email" "update_email"
+    ];
+
     claudeSounds = "/Users/dejanmurko/Documents/Claude Sounds";
     claudeHooks = {
       Stop = [{
@@ -358,6 +373,14 @@
             url = "https://mcp.facebook.com/ads";
           };
 
+          # FirstPromoter MCP (hosted; OAuth via /mcp). Read-only: every write
+          # tool is denied, see firstPromoterWriteTools and managed settings.
+          # https://docs.firstpromoter.com/mcp/overview
+          firstpromoter = {
+            type = "http";
+            url = "https://mcp.firstpromoter.com";
+          };
+
           # Google Ads MCP (AdLoop, runs locally; MIT). OAuth client from our own
           # Google Cloud project. Config, client and token live in the Marketing
           # Work folder's git-ignored .adloop/ (config.yaml points to the other two).
@@ -530,6 +553,8 @@
               # home-manager ships mcpServers as a plugin, hence the prefix.
               permissions.ask = [ "mcp__plugin_claude-code-home-manager_postale__send_email" ]
                 ++ metaAdsWriteTools ++ googleAdsWriteTools;
+              # FirstPromoter is read-only.
+              permissions.deny = firstPromoterWriteTools;
             })} \
           "/Library/Application Support/ClaudeCode/managed-settings.json"
       '';
