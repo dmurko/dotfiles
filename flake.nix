@@ -89,11 +89,11 @@
       "ads_delete_local_ad_image" "ads_dataset_create" "ads_dataset_update_automatic_matching"
     ];
 
-    # Google Ads MCP (AdLoop) tools that change an account: each one asks first.
-    # Every other AdLoop write tool only stores a plan locally; these two apply it.
-    # Checked in the adloop 0.41.2 wheel, 2026-11-18. Recheck on every version bump.
+    # Google Ads MCP (AdLoop): approve_change (the approval-card button) asks first.
+    # confirm_and_apply doesn't: the google-ads skill gets one yes per batch in chat
+    # (Marketing Work AGENTS.md). Checked in the adloop 0.41.2 wheel, 2026-11-18.
     googleAdsWriteTools = map (t: "mcp__plugin_claude-code-home-manager_google-ads__" + t) [
-      "confirm_and_apply" "approve_change"
+      "approve_change"
     ];
 
     # Customer.io MCP deletes ask first. Writes don't: the copywriting skill
