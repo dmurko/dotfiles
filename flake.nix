@@ -333,15 +333,6 @@
             url = "https://api.ahrefs.com/mcp/mcp";
           };
 
-          dataforseo = {
-            command = "${pkgs.nodejs}/bin/npx";
-            args = [ "-y" "dataforseo-mcp-server" ];
-            env = {
-              DATAFORSEO_USERNAME = "\${DATAFORSEO_USERNAME}";
-              DATAFORSEO_PASSWORD = "\${DATAFORSEO_PASSWORD}";
-            };
-          };
-
           # Google Search Console MCP (OAuth mode).
           # https://suganthan.com/blog/google-search-console-mcp-server/
           gsc = {
