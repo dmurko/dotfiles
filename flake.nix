@@ -96,9 +96,10 @@
       "confirm_and_apply" "approve_change"
     ];
 
-    # Customer.io MCP writes and deletes: each one asks first.
+    # Customer.io MCP deletes ask first. Writes don't: the copywriting skill
+    # gets one yes for a whole build in chat (Marketing Work AGENTS.md).
     customerIoWriteTools = map (t: "mcp__plugin_claude-code-home-manager_customerio__" + t) [
-      "cio_write_api" "cio_delete_api"
+      "cio_delete_api"
     ];
 
     # FirstPromoter MCP is read-only for us: every write tool is denied.
