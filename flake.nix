@@ -91,13 +91,13 @@
 
     # Google Ads MCP (AdLoop): approve_change (the approval-card button) asks first.
     # confirm_and_apply doesn't: the google-ads skill gets one yes per batch in chat
-    # (Marketing Work AGENTS.md). Checked in the adloop 0.41.2 wheel, 2026-11-18.
+    # (marketeer AGENTS.md). Checked in the adloop 0.41.2 wheel, 2026-11-18.
     googleAdsWriteTools = map (t: "mcp__plugin_claude-code-home-manager_google-ads__" + t) [
       "approve_change"
     ];
 
     # Customer.io MCP deletes ask first. Writes don't: the copywriting skill
-    # gets one yes for a whole build in chat (Marketing Work AGENTS.md).
+    # gets one yes for a whole build in chat (marketeer AGENTS.md).
     customerIoWriteTools = map (t: "mcp__plugin_claude-code-home-manager_customerio__" + t) [
       "cio_delete_api"
     ];
@@ -400,7 +400,7 @@
             args = [ "adloop@0.41.2" ];
             env = {
               ADLOOP_TOOLSETS = "ads";
-              ADLOOP_CONFIG = "/Users/dejanmurko/Work/Ops/Marketing Work/.adloop/config.yaml";
+              ADLOOP_CONFIG = "/Users/dejanmurko/Work/Ops/marketeer/.adloop/config.yaml";
             };
           };
         };
