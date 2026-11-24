@@ -361,6 +361,12 @@
             url = "https://mcp.monid.ai/v1";
           };
 
+          # Details MCP (remote, OAuth via /mcp).
+          details = {
+            type = "http";
+            url = "https://api.details.so/mcp";
+          };
+
           # Postale.io mailbox (IMAP/SMTP): our own stdlib-only server.
           # send_email always asks first, see managed settings below.
           postale = {
