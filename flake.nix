@@ -64,7 +64,7 @@
 
     # Meta Ads MCP write tools: each one asks first (managed settings below).
     # Names from Meta's ads-mcp-server tool docs, read 2026-11-18.
-    metaAdsWriteTools = map (t: "mcp__plugin_claude-code-home-manager_meta-ads__" + t) [
+    metaAdsWriteTools = map (t: "mcp__plugin_claude-code-home-manager_ads-facebook__" + t) [
       "ads_create_campaign" "ads_create_ad_set" "ads_create_ad" "ads_create_creative"
       "ads_activate_entity" "ads_update_entity" "ads_boost_ig_post"
       "ads_create_custom_audience" "ads_update_custom_audience"
@@ -90,15 +90,15 @@
     ];
 
     # Google Ads MCP (AdLoop): approve_change (the approval-card button) asks first.
-    # confirm_and_apply doesn't: the google-ads skill gets one yes per batch in chat
+    # confirm_and_apply doesn't: the ads-google skill gets one yes per batch in chat
     # (marketeer AGENTS.md). Checked in the adloop 0.41.2 wheel, 2026-11-18.
-    googleAdsWriteTools = map (t: "mcp__plugin_claude-code-home-manager_google-ads__" + t) [
+    googleAdsWriteTools = map (t: "mcp__plugin_claude-code-home-manager_ads-google__" + t) [
       "approve_change"
     ];
 
     # LinkedIn Ads MCP (liads-mcp-server): draft tools only store plans; the one
     # tool that changes LinkedIn asks first. Checked in liads-mcp-server b754705, 2026-11-26.
-    linkedinAdsWriteTools = map (t: "mcp__plugin_claude-code-home-manager_linkedin-ads__" + t) [
+    linkedinAdsWriteTools = map (t: "mcp__plugin_claude-code-home-manager_ads-linkedin__" + t) [
       "confirm_and_apply"
     ];
 
@@ -391,7 +391,7 @@
           # Meta Ads MCP (Meta-hosted; OAuth via /mcp, Facebook Login for Business).
           # Every write tool asks first, see metaAdsWriteTools and managed settings.
           # https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-get-started
-          meta-ads = {
+          ads-facebook = {
             type = "http";
             url = "https://mcp.facebook.com/ads";
           };
@@ -410,7 +410,7 @@
           # Pinned to a release older than the 7-day uv cooldown below. Changes
           # apply only through the tools in googleAdsWriteTools, which ask first.
           # https://github.com/kLOsk/adloop
-          google-ads = {
+          ads-google = {
             command = "${pkgs.uv}/bin/uvx";
             args = [ "adloop@0.41.2" ];
             env = {
@@ -425,7 +425,7 @@
           # default, budget caps in config.yaml. Changes apply only through the tool in
           # linkedinAdsWriteTools, which asks first.
           # https://github.com/teamniteo/liads-mcp-server
-          linkedin-ads = {
+          ads-linkedin = {
             command = "${pkgs.uv}/bin/uvx";
             args = [
               "--from"
