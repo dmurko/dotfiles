@@ -179,6 +179,9 @@
         bat
         gh
         nodejs_24
+        # Python 3.10+ for Claude Code plugin hooks (security-guidance);
+        # macOS /usr/bin/python3 is 3.9
+        python3
         pkgs-unstable.rtk
       ];
 
