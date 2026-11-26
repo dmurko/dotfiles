@@ -126,6 +126,29 @@
       "create_contest" "get_more_tools"
     ];
 
+    # Paddle MCP is read-only for us: the servers load only read tools
+    # (--tools=read-only) and every write tool is denied as well. One server per
+    # Paddle account, because the server takes one API key. Names from
+    # @paddle/paddle-mcp 0.1.6 build/tools.js, read 2026-11-26; recheck on upgrade.
+    paddleAccounts = [ "wordform" ];
+    paddleWriteTools = builtins.concatMap (a: map (t: "mcp__plugin_claude-code-home-manager_paddle-${a}__" + t) [
+      "create_product" "update_product" "create_price" "update_price" "preview_prices"
+      "create_discount" "update_discount"
+      "create_discount_group" "update_discount_group" "archive_discount_group"
+      "create_customer" "update_customer" "create_address" "update_address"
+      "create_business" "update_business"
+      "create_transaction" "update_transaction" "preview_transaction_create" "revise_transaction"
+      "create_adjustment"
+      "update_subscription" "cancel_subscription" "pause_subscription" "resume_subscription"
+      "activate_subscription" "preview_subscription_update"
+      "create_subscription_charge" "preview_subscription_charge"
+      "delete_saved_payment_method" "create_customer_portal_session"
+      "create_notification_setting" "update_notification_setting" "delete_notification_setting"
+      "replay_notification"
+      "create_simulation" "update_simulation" "create_simulation_run" "replay_simulation_run_event"
+      "create_report" "create_client_side_token" "revoke_client_side_token"
+    ]) paddleAccounts;
+
     claudeSounds = "/Users/dejanmurko/Documents/Claude Sounds";
     claudeHooks = {
       Stop = [{
@@ -436,7 +459,25 @@
               LIADS_CONFIG = "/Users/dejanmurko/Work/Ops/marketeer/.liads/config.yaml";
             };
           };
-        };
+        }
+        # Paddle Billing MCP (Paddle's own, runs locally; Apache-2.0), one server
+        # per account in paddleAccounts: paddle-wordform. Read tools
+        # only; write tools also denied, see paddleWriteTools. Keys in .secrets.env
+        # as PADDLE_<ACCOUNT>_API_KEY, created in Paddle with read permissions only.
+        # Paddle Classic isn't supported. Pinned to a release older than the 7-day
+        # npm cooldown below.
+        # https://github.com/PaddleHQ/paddle-mcp-server
+        // builtins.listToAttrs (map (a: {
+          name = "paddle-${a}";
+          value = {
+            command = "${pkgs.nodejs}/bin/npx";
+            args = [ "-y" "@paddle/paddle-mcp@0.1.6" "--tools=read-only" ];
+            env = {
+              PADDLE_API_KEY = "\${PADDLE_${pkgs.lib.toUpper a}_API_KEY}";
+              PADDLE_ENVIRONMENT = "production";
+            };
+          };
+        }) paddleAccounts);
 
         settings = {
 
@@ -589,8 +630,8 @@
               # home-manager ships mcpServers as a plugin, hence the prefix.
               permissions.ask = [ "mcp__plugin_claude-code-home-manager_postale__send_email" ]
                 ++ metaAdsWriteTools ++ googleAdsWriteTools ++ linkedinAdsWriteTools ++ customerIoWriteTools;
-              # FirstPromoter is read-only.
-              permissions.deny = firstPromoterWriteTools;
+              # FirstPromoter and Paddle are read-only.
+              permissions.deny = firstPromoterWriteTools ++ paddleWriteTools;
             })} \
           "/Library/Application Support/ClaudeCode/managed-settings.json"
       '';
