@@ -97,7 +97,7 @@
     ];
 
     # LinkedIn Ads MCP (liads-mcp-server): draft tools only store plans; the one
-    # tool that changes LinkedIn asks first. Checked in liads-mcp-server 286ccf4, 2026-11-26.
+    # tool that changes LinkedIn asks first. Checked in liads-mcp-server b754705, 2026-11-26.
     linkedinAdsWriteTools = map (t: "mcp__plugin_claude-code-home-manager_linkedin-ads__" + t) [
       "confirm_and_apply"
     ];
@@ -426,7 +426,7 @@
             command = "${pkgs.uv}/bin/uvx";
             args = [
               "--from"
-              "git+https://github.com/teamniteo/liads-mcp-server@286ccf4691ae8a5d9b0a12f3d9945a6e5599d07b"
+              "git+https://github.com/teamniteo/liads-mcp-server@b754705b3d8843a839cf67a380fed2c8099038aa"
               "liads-mcp-server"
             ];
             env = {
