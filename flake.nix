@@ -96,6 +96,12 @@
       "approve_change"
     ];
 
+    # LinkedIn Ads MCP (liads-mcp-server): draft tools only store plans; the one
+    # tool that changes LinkedIn asks first. Checked in liads-mcp-server b89672b, 2026-11-26.
+    linkedinAdsWriteTools = map (t: "mcp__plugin_claude-code-home-manager_linkedin-ads__" + t) [
+      "confirm_and_apply"
+    ];
+
     # Customer.io MCP deletes ask first. Writes don't: the copywriting skill
     # gets one yes for a whole build in chat (marketeer AGENTS.md).
     customerIoWriteTools = map (t: "mcp__plugin_claude-code-home-manager_customerio__" + t) [
@@ -409,6 +415,24 @@
               ADLOOP_CONFIG = "/Users/dejanmurko/Work/Ops/marketeer/.adloop/config.yaml";
             };
           };
+
+          # LinkedIn Ads MCP (liads-mcp-server, ours; MIT). OAuth client from our own
+          # LinkedIn developer app. Config, client, token and audit log live in the
+          # Marketing Work folder's git-ignored .liads/. Pinned to a commit; drafts by
+          # default, budget caps in config.yaml. Changes apply only through the tool in
+          # linkedinAdsWriteTools, which asks first.
+          # https://github.com/teamniteo/liads-mcp-server
+          linkedin-ads = {
+            command = "${pkgs.uv}/bin/uvx";
+            args = [
+              "--from"
+              "git+https://github.com/teamniteo/liads-mcp-server@b89672b20704c61d2eeafbdb67134d7ad53de09b"
+              "liads-mcp-server"
+            ];
+            env = {
+              LIADS_CONFIG = "/Users/dejanmurko/Work/Ops/marketeer/.liads/config.yaml";
+            };
+          };
         };
 
         settings = {
@@ -557,11 +581,11 @@
           ${pkgs.writeText "claude-managed-settings.json"
             (builtins.toJSON {
               hooks = claudeHooks;
-              # Every email and every Meta Ads or Google Ads change needs approval,
+              # Every email and every Meta, Google or LinkedIn Ads change needs approval,
               # whatever a project's settings allow.
               # home-manager ships mcpServers as a plugin, hence the prefix.
               permissions.ask = [ "mcp__plugin_claude-code-home-manager_postale__send_email" ]
-                ++ metaAdsWriteTools ++ googleAdsWriteTools ++ customerIoWriteTools;
+                ++ metaAdsWriteTools ++ googleAdsWriteTools ++ linkedinAdsWriteTools ++ customerIoWriteTools;
               # FirstPromoter is read-only.
               permissions.deny = firstPromoterWriteTools;
             })} \
